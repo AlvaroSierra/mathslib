@@ -3,6 +3,7 @@ use std::ops::{Div, Mul, Add, AddAssign};
 /// A mathematical representation of a vector
 /// # TODO
 /// - Change MathVec becomes
+#[derive(Clone)]
 pub struct MathVec<T, const DIMS: usize> {
     data: [T; DIMS]
 }
