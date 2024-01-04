@@ -43,6 +43,17 @@ impl<T: Mul<P, Output = T> + Copy, const DIMS: usize, P: Copy> Mul<P> for MathVe
     }
 }
 
+impl<T: Div<P, Output = T> + Copy, const DIMS: usize, P: Copy> Div<P> for MathVec<T, DIMS> {
+    type Output = MathVec<T, DIMS>;
+
+    fn div(mut self, rhs: P) -> Self::Output {
+        for m in 0..DIMS {
+            self.data[m] = self.data[m] / rhs
+        }
+        self
+    }
+}
+
 // impl<T, const DIMS: usize> FromIterator<[T; DIMS]> for MathVec<T, DIMS>  where [T; DIMS]: FromIterator<T>{
 //     fn from_iter<P: IntoIterator<Item=[T; DIMS]>>(iter: P) -> Self{
 //         Self {
