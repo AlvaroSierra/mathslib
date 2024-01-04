@@ -1,4 +1,4 @@
-use std::ops::{ Div, Mul};
+use std::ops::{Div, Mul, Add, AddAssign};
 
 /// A mathematical representation of a vector
 /// # TODO
@@ -54,13 +54,17 @@ impl<T: Div<P, Output = T> + Copy, const DIMS: usize, P: Copy> Div<P> for MathVe
     }
 }
 
-// impl<T, const DIMS: usize> FromIterator<[T; DIMS]> for MathVec<T, DIMS>  where [T; DIMS]: FromIterator<T>{
-//     fn from_iter<P: IntoIterator<Item=[T; DIMS]>>(iter: P) -> Self{
-//         Self {
-//             data: iter.into_iter().collect(),
-//         }
-//     }
-// }
+impl<T: AddAssign + Copy, const DIMS: usize> Add for MathVec<T, DIMS> {
+    type Output = MathVec<T, DIMS>;
+
+    fn add(mut self, rhs: MathVec<T, DIMS>) -> Self::Output {
+        for m in 0..DIMS {
+            // Indexing both vectors is safe because both vectors have the same number of dimensions
+            self.data[m] += rhs.data[m]
+        }
+        self
+    }
+}
 
 impl<T: Div<Output=T> + Copy, const DIMS: usize> MathVecTrait<T, DIMS> for MathVec<T, DIMS> {
     fn unit_vector(&self) -> [T; DIMS] {
