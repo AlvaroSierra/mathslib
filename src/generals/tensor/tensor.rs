@@ -11,6 +11,7 @@ pub enum InitTensorFromVecError {
 }
 
 
+// Alternative tensor implementation with an Enum
 pub struct Tensor<T, const SIZE: usize, const RANK: usize> {
     data: [T; SIZE],
     dimensions: [usize; RANK]

@@ -12,6 +12,7 @@ license = "Apache-2.0"
 solve = []
 optimize = []
 stats = []
+geometry = []
 
 [lib]
 name = "mathslib"
