@@ -8,9 +8,11 @@ pub mod polar {
     ///
     /// Note: Amplitude assumed to always be in radians.
     pub struct PolarCoordinates<T> {
-        magnitude: T,
-        amplitude: T, 
+        pub magnitude: T,
+        pub amplitude: T, 
     }
+    
+    
 
     impl From<MathVec<f32, 2>> for PolarCoordinates<f32> {
         fn from(value: MathVec<f32, 2>) -> Self {
