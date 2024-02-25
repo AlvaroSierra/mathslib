@@ -80,6 +80,19 @@ impl<T: Div<Output=T> + Copy, const DIMS: usize> MathVecTrait<T, DIMS> for MathV
     }
 }
 
+
+impl<T, const DIMS: usize> From<[T; DIMS]> for MathVec<T, DIMS> {
+    fn from(value: [T; DIMS]) -> Self {
+        Self::new(value)        
+    }
+}
+
+impl<T, const DIMS: usize> Into<[T; DIMS]> for MathVec<T, DIMS> {
+    fn into(self) -> [T; DIMS] {
+        self.data
+    }
+}
+
 pub trait MathVecTrait<T, const DIMS: usize> {
     fn unit_vector(&self) -> [T; DIMS];
     fn magnitude(&self) -> T;
