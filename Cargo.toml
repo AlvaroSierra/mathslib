@@ -6,7 +6,9 @@ repository = "https://github.com/mathslib/mathslib"
 description = "A math library for Rust"
 license = "Apache-2.0"
 
-[dependencies]
+[lib]
+name = "mathslib"
+path = "src/lib.rs"
 
 [features]
 solve = []
@@ -14,6 +16,9 @@ optimize = []
 stats = []
 geometry = []
 
-[lib]
-name = "mathslib"
-path = "src/lib.rs"
+[dependencies]
+thiserror = "1.0"
+
+
+[toolchain]
+channel = "nightly"

@@ -1,3 +1,6 @@
+#![feature(generic_const_exprs)]
+// See #76560
+
 pub mod generals;
 
 #[cfg(feature = "optimize")]

@@ -1,9 +1,9 @@
-use std::ops::{Div, Mul, Add, AddAssign};
+use std::ops::{Div, Mul, Add, AddAssign, Sub, SubAssign};
 
 /// A mathematical representation of a vector
 /// # TODO
 /// - Change MathVec becomes
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Debug, Copy)]
 pub struct MathVec<T, const DIMS: usize> {
     data: [T; DIMS]
 }
@@ -17,6 +17,18 @@ impl<T: Copy, const DIMS: usize> MathVec<T, DIMS> {
 
         self
     }
+
+
+    pub fn add_dim(self, new_val: T) -> MathVec<T, { DIMS + 1 }> {
+
+        let mut data = [new_val; DIMS + 1];
+
+        for (inx, i) in self.data.into_iter().enumerate() {
+            data[inx] = i
+        }
+
+        MathVec::new(data)
+    }
 }
 
 impl<T, const DIMS: usize> MathVec<T, DIMS> {
@@ -28,6 +40,8 @@ impl<T, const DIMS: usize> MathVec<T, DIMS> {
     pub(crate) fn data(&self) -> &[T; DIMS] {
         &self.data
     }
+
+
 }
 
 /// Trait for multiplying a scalar by a vector
@@ -62,6 +76,18 @@ impl<T: AddAssign + Copy, const DIMS: usize> Add for MathVec<T, DIMS> {
         for m in 0..DIMS {
             // Indexing both vectors is safe because both vectors have the same number of dimensions
             self.data[m] += rhs.data[m]
+        }
+        self
+    }
+}
+
+impl<T: SubAssign + Copy, const DIMS: usize> Sub for MathVec<T, DIMS> {
+    type Output = MathVec<T, DIMS>;
+
+    fn sub(mut self, rhs: MathVec<T, DIMS>) -> Self::Output {
+        for m in 0..DIMS {
+            // Indexing both vectors is safe because both vectors have the same number of dimensions
+            self.data[m] -= rhs.data[m]
         }
         self
     }
