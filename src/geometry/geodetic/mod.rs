@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-
+#[derive(Debug, Clone, Copy)]
 pub struct Bearing {
     bearing: f64
 }
