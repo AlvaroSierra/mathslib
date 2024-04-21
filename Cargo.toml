@@ -18,7 +18,7 @@ geometry = []
 
 [dependencies]
 thiserror = "1.0"
-
+uom = "0.36"
 
 [toolchain]
 channel = "nightly"
