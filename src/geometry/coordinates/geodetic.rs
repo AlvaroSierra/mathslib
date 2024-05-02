@@ -2,6 +2,8 @@ use thiserror::Error;
 use uom::si::angle::{degree, Angle};
 use uom::si::length::Length;
 
+pub const earth_radius: f32 = 6371f32;
+
 #[derive(Debug, Clone, Copy)]
 pub struct Bearing {
     bearing: f64,
@@ -115,9 +117,9 @@ impl GeodeticCoordinate2DTrait for GeodeticCoordinate2D {
 /// 
 /// 
 /// See https://en.wikipedia.org/wiki/N-vector
-pub(crate) type NVector2 = crate::generals::tensor::MathVec<f32, 3>;
+pub(crate) type NVector = crate::generals::tensor::MathVec<f32, 3>;
 
-impl<GeodeticCoordinate: GeodeticCoordinate2DTrait> From<GeodeticCoordinate> for NVector2 {
+impl<GeodeticCoordinate: GeodeticCoordinate2DTrait> From<GeodeticCoordinate> for NVector {
     fn from(value: GeodeticCoordinate) -> Self {
         Self::new([(value.latitude().cos() * value.longitude().cos()).into(), (value.latitude().cos() * value.longitude().sin()).into(), value.latitude().sin().into()])
     }
