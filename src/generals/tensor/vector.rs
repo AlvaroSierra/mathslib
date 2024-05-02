@@ -1,4 +1,6 @@
 use std::ops::{Add, AddAssign, Div, Mul, Sub, SubAssign};
+use crate::generals::traits::{Pow, Zero,};
+
 
 /// A mathematical representation of a vector
 /// # TODO
@@ -13,6 +15,7 @@ impl<T: Copy, const DIMS: usize> MathVec<T, DIMS> {
     where
         T: Mul<P, Output = T>,
     {
+        // TODO: Fix this, this is not the cross product XD
         // TODO: Move this function to a Trait, the cross product also applies for matrices (although signature might not be the same therefore kept here for )
         for m in 0..DIMS {
             self.data[m] = self.data[m] * rhs.data[m]
@@ -30,6 +33,20 @@ impl<T: Copy, const DIMS: usize> MathVec<T, DIMS> {
 
         MathVec::new(data)
     }
+}
+
+impl<T: Copy + Zero + AddAssign, const DIMS: usize> MathVec<T, DIMS> {
+
+    pub fn dot_product<P: Copy>(&self, rhs: MathVec<P, DIMS>) -> T where T: Mul<P, Output = T> {
+        let mut total: T = T::zero();
+        
+        for m in 0..DIMS {
+            total += self.data[m] * rhs.data[m]
+        }
+        
+        total
+    }
+
 }
 
 impl<T, const DIMS: usize> MathVec<T, DIMS> {
@@ -92,7 +109,7 @@ impl<T: SubAssign + Copy, const DIMS: usize> Sub for MathVec<T, DIMS> {
     }
 }
 
-impl<T: Div<Output = T> + Copy, const DIMS: usize> MathVecTrait<T, DIMS> for MathVec<T, DIMS> {
+impl<T: Div<Output = T> + Copy + Zero + Pow<i8, T> + AddAssign + Into<f32> + From<f32>, const DIMS: usize> MathVecTrait<T, DIMS> for MathVec<T, DIMS> {
     fn unit_vector(&self) -> [T; DIMS] {
         let mag = self.magnitude();
         self.data.map(|x| x / mag)
@@ -100,8 +117,12 @@ impl<T: Div<Output = T> + Copy, const DIMS: usize> MathVecTrait<T, DIMS> for Mat
 
     /// Magnitude will always be higher that the elements
     fn magnitude(&self) -> T {
-        todo!()
-        // self.data.map(|x| x.pow(2))
+        let mut total: T = T::zero();
+        for i in self.data.map(|x| x.pow(2)) {
+            total += i
+        }
+
+        total.into().sqrt().into() // TODO: Make sqrt a trait
     }
 }
 
@@ -119,6 +140,8 @@ impl<T, const DIMS: usize> Into<[T; DIMS]> for MathVec<T, DIMS> {
 
 pub trait MathVecTrait<T, const DIMS: usize> {
     fn unit_vector(&self) -> [T; DIMS];
+
+    #[doc(alias="abs")]
     fn magnitude(&self) -> T;
 }
 
