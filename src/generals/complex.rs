@@ -1,15 +1,10 @@
-use std::fmt::{Display, Formatter};
+use super::traits::Number;
 use crate::generals::tensor::MathVec;
 use crate::IMAGINARY_NUMBER_LETTER;
-use super::traits::Number;
+use std::fmt::{Display, Formatter};
 
 #[cfg(test)]
-mod test {
-
-}
-
-
-
+mod test {}
 
 /// A complex number with a real and imaginary part
 ///
@@ -19,7 +14,12 @@ mod test {
 type ComplexNumber<T> = MathVec<T, 2>;
 impl<T: Display> Display for ComplexNumber<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&*format!("{} + {}{}", self.data()[0], self.data()[1], IMAGINARY_NUMBER_LETTER))
+        f.write_str(&*format!(
+            "{} + {}{}",
+            self.data()[0],
+            self.data()[1],
+            IMAGINARY_NUMBER_LETTER
+        ))
     }
 }
 

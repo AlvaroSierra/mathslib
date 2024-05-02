@@ -1,6 +1,6 @@
 mod vector;
 
-pub use vector::{MathVec};
+pub use vector::MathVec;
 
 // #[cfg(test)]
 // mod tests {

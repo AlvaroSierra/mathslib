@@ -8,13 +8,12 @@
 /// - Implement for referenced values
 /// - Implement solving for complex numbers when required
 
-
 #[cfg(test)]
 mod tests {
+    use super::{pow, Pow};
     ///
     /// These tests don't include validation for real numbers to the power of a float (int^float) due to the possibility of resulting in a complex number not yet implemented
     use std::fmt::Debug;
-    use super::{pow, Pow};
 
     fn test<T: Pow<P, Q> + Copy, P: Clone, Q: PartialEq + Debug>(base: T, exp: P, result: Q) {
         assert_eq!(base.pow(exp.clone()), result);

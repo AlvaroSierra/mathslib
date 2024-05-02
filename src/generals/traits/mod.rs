@@ -1,5 +1,5 @@
-mod pow;
 mod number;
+mod pow;
 
-pub use number::{IntegerNumber, Number, WholeNumber, RealNumber};
-pub use pow::{Pow, pow};
+pub use number::{IntegerNumber, Number, RealNumber, WholeNumber};
+pub use pow::{pow, Pow};

@@ -1,15 +1,18 @@
-use std::ops::{Div, Mul, Add, AddAssign, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, Mul, Sub, SubAssign};
 
 /// A mathematical representation of a vector
 /// # TODO
 /// - Change MathVec becomes
 #[derive(Clone, PartialEq, Debug, Copy)]
 pub struct MathVec<T, const DIMS: usize> {
-    data: [T; DIMS]
+    data: [T; DIMS],
 }
 
 impl<T: Copy, const DIMS: usize> MathVec<T, DIMS> {
-    pub fn cross_product<P: Copy>(mut self, rhs: MathVec<P, DIMS>) -> Self where T: Mul<P, Output=T> {
+    pub fn cross_product<P: Copy>(mut self, rhs: MathVec<P, DIMS>) -> Self
+    where
+        T: Mul<P, Output = T>,
+    {
         // TODO: Move this function to a Trait, the cross product also applies for matrices (although signature might not be the same therefore kept here for )
         for m in 0..DIMS {
             self.data[m] = self.data[m] * rhs.data[m]
@@ -18,9 +21,7 @@ impl<T: Copy, const DIMS: usize> MathVec<T, DIMS> {
         self
     }
 
-
     pub fn add_dim(self, new_val: T) -> MathVec<T, { DIMS + 1 }> {
-
         let mut data = [new_val; DIMS + 1];
 
         for (inx, i) in self.data.into_iter().enumerate() {
@@ -40,8 +41,6 @@ impl<T, const DIMS: usize> MathVec<T, DIMS> {
     pub(crate) fn data(&self) -> &[T; DIMS] {
         &self.data
     }
-
-
 }
 
 /// Trait for multiplying a scalar by a vector
@@ -93,7 +92,7 @@ impl<T: SubAssign + Copy, const DIMS: usize> Sub for MathVec<T, DIMS> {
     }
 }
 
-impl<T: Div<Output=T> + Copy, const DIMS: usize> MathVecTrait<T, DIMS> for MathVec<T, DIMS> {
+impl<T: Div<Output = T> + Copy, const DIMS: usize> MathVecTrait<T, DIMS> for MathVec<T, DIMS> {
     fn unit_vector(&self) -> [T; DIMS] {
         let mag = self.magnitude();
         self.data.map(|x| x / mag)
@@ -106,10 +105,9 @@ impl<T: Div<Output=T> + Copy, const DIMS: usize> MathVecTrait<T, DIMS> for MathV
     }
 }
 
-
 impl<T, const DIMS: usize> From<[T; DIMS]> for MathVec<T, DIMS> {
     fn from(value: [T; DIMS]) -> Self {
-        Self::new(value)        
+        Self::new(value)
     }
 }
 
@@ -131,6 +129,5 @@ impl<T> MathVec2Trait<T> for MathVec<T, 2> {
 }
 
 pub trait MathVec2Trait<T> {
-
     fn amplitude(&self) -> T;
 }

@@ -28,7 +28,7 @@ impl_zero!(i64, 0);
 impl_zero!(i128, 0);
 impl_zero!(isize, 0);
 
-pub trait WholeNumber: Zero{}
+pub trait WholeNumber: Zero {}
 
 impl WholeNumber for u8 {}
 

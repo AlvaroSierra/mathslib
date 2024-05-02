@@ -2,29 +2,27 @@ use thiserror::Error;
 use uom::si::angle::{degree, Angle};
 use uom::si::length::Length;
 
-
 #[derive(Debug, Clone, Copy)]
 pub struct Bearing {
-    bearing: f64
+    bearing: f64,
 }
 
 impl Bearing {
-    pub fn new(bearing: f64) -> Result<Self, SetBearingError> { 
+    pub fn new(bearing: f64) -> Result<Self, SetBearingError> {
         if 0f64 > bearing || bearing > 360f64 {
-            return Err(SetBearingError::OutOfRange)
+            return Err(SetBearingError::OutOfRange);
         }
 
         Ok(Self { bearing })
     }
-    
-    pub fn update(&mut self, bearing: f64) -> Result<(), SetBearingError> { 
+
+    pub fn update(&mut self, bearing: f64) -> Result<(), SetBearingError> {
         if 0f64 > bearing || bearing > 360f64 {
-            return Err(SetBearingError::OutOfRange)
+            return Err(SetBearingError::OutOfRange);
         }
         self.bearing = bearing;
         Ok(())
     }
-
 
     pub fn bearing(&self) -> f64 {
         self.bearing
@@ -110,6 +108,18 @@ impl GeodeticCoordinate2DTrait for GeodeticCoordinate2D {
     #[inline]
     fn longitude(&self) -> &AngleF32 {
         &self.longitude
+    }
+}
+
+/// This struct is a representation of geodetic coordinates which represent the outward-pointing unit vector which is normal to that position to the ellipsoid. This crate relies in this type for much of the geometry computation
+/// 
+/// 
+/// See https://en.wikipedia.org/wiki/N-vector
+pub(crate) type NVector2 = crate::generals::tensor::MathVec<f32, 3>;
+
+impl<GeodeticCoordinate: GeodeticCoordinate2DTrait> From<GeodeticCoordinate> for NVector2 {
+    fn from(value: GeodeticCoordinate) -> Self {
+        Self::new([(value.latitude().cos() * value.longitude().cos()).into(), (value.latitude().cos() * value.longitude().sin()).into(), value.latitude().sin().into()])
     }
 }
 
