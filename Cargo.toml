@@ -20,5 +20,5 @@ geometry = []
 thiserror = "1.0"
 uom = "0.36"
 
-[toolchain]
-channel = "nightly"
+[dev-dependencies]
+approx = "0.5"

@@ -11,48 +11,53 @@
 #[cfg(test)]
 mod tests {
     use super::{pow, Pow};
+    use approx::{relative_eq, RelativeEq};
     ///
     /// These tests don't include validation for real numbers to the power of a float (int^float) due to the possibility of resulting in a complex number not yet implemented
     use std::fmt::Debug;
 
-    fn test<T: Pow<P, Q> + Copy, P: Clone, Q: PartialEq + Debug>(base: T, exp: P, result: Q) {
-        assert_eq!(base.pow(exp.clone()), result);
-        assert_eq!(pow(base, exp), result)
+    fn test_relative_eq<T: Pow<P, Q> + Copy, P: Clone, Q: PartialEq + Debug + RelativeEq>(base: T, exp: P, result: Q) {
+        relative_eq!(base.pow(exp.clone()), result);
+        relative_eq!(pow(base, exp), result);
     }
 
+    fn test_eq<T: Pow<P, Q> + Copy, P: Clone, Q: PartialEq + Debug>(base: T, exp: P, result: Q) {
+        assert_eq!(base.pow(exp.clone()), result);
+        assert_eq!(pow(base, exp), result);
+    }
     #[test]
     fn pow_fif() {
-        self::test(0.4f64, -5, 97.65624999999994);
+        self::test_relative_eq(0.4f64, -5, 97.65624999999994);
     }
 
     #[test]
     fn pow_fuf() {
-        self::test(0.4f64, 5, 0.010240000000000006);
+        self::test_relative_eq(0.4f64, 5, 0.010240000000000006);
     }
 
     #[test]
     fn pow_uif() {
-        self::test(5u16, -2i16, 0.04);
+        self::test_relative_eq(5u16, -2i16, 0.04);
     }
 
     #[test]
     fn pow_uff() {
-        self::test(5u16, 0.5f32, 2.23606797749979);
+        self::test_relative_eq(5u16, 0.5f32, 2.23606797749979);
     }
 
     #[test]
     fn pow_iif() {
-        self::test(-2i32, -2i32, 0.25);
+        self::test_relative_eq(-2i32, -2i32, 0.25);
     }
 
     #[test]
     fn pow_uuu() {
-        self::test(2u8, 2u8, 4u8);
+        self::test_eq(2u8, 2u8, 4u8);
     }
 
     #[test]
     fn pow_iui() {
-        self::test(-2i8, 3u8, -8i8);
+        self::test_eq(-2i8, 3u8, -8i8);
     }
 }
 
