@@ -29,8 +29,6 @@ impl<Coordinate> Polygon<Coordinate> {
     }
 }
 
-///
-/// 
 impl<Coordinate: Clone> From<Polygon<Coordinate>> for Vec<Line<Coordinate>> {
     // TODO: Consider the possibility of returning Rc so that 
 
@@ -60,8 +58,8 @@ impl<'a, Coordinate: Clone> From<&'a Polygon<Coordinate>> for Vec<Line<&'a Coord
         let mut previous = iterator.next().unwrap();
 
         for i in iterator {
-            lines.push(Line::new(previous, &i));
-            previous = &i; 
+            lines.push(Line::new(previous, i));
+            previous = i; 
         }
 
         lines
@@ -71,7 +69,7 @@ impl<'a, Coordinate: Clone> From<&'a Polygon<Coordinate>> for Vec<Line<&'a Coord
 
 
 impl Intersect<GeodeticCoordinate2D> for Polygon<GeodeticCoordinate2D> {
-    fn intersects(&self, line: Line<GeodeticCoordinate2D>) -> Vec<GeodeticCoordinate2D> {
+    fn intersects(self, _line: Line<GeodeticCoordinate2D>) -> Vec<GeodeticCoordinate2D> {
         todo!()
     }
 }

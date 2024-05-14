@@ -132,9 +132,9 @@ impl<T, const DIMS: usize> From<[T; DIMS]> for MathVec<T, DIMS> {
     }
 }
 
-impl<T, const DIMS: usize> Into<[T; DIMS]> for MathVec<T, DIMS> {
-    fn into(self) -> [T; DIMS] {
-        self.data
+impl<T, const DIMS: usize> From<MathVec<T, DIMS>> for [T; DIMS] {
+    fn from(value: MathVec<T, DIMS>) -> Self {
+        value.data
     }
 }
 
@@ -145,12 +145,3 @@ pub trait MathVecTrait<T, const DIMS: usize> {
     fn magnitude(&self) -> T;
 }
 
-impl<T> MathVec2Trait<T> for MathVec<T, 2> {
-    fn amplitude(&self) -> T {
-        todo!()
-    }
-}
-
-pub trait MathVec2Trait<T> {
-    fn amplitude(&self) -> T;
-}

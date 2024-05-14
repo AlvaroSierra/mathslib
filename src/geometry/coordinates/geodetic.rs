@@ -1,8 +1,11 @@
 use thiserror::Error;
-use uom::si::angle::{degree, Angle};
+use uom::si::angle::{degree, radian, Angle};
 use uom::si::length::Length;
 
-pub const earth_radius: f32 = 6371f32;
+use crate::generals::tensor::{MathVec, MathVecTrait};
+use crate::generals::traits::Pow;
+
+pub const EARTH_RADIUS: f32 = 6371f32;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Bearing {
@@ -11,7 +14,7 @@ pub struct Bearing {
 
 impl Bearing {
     pub fn new(bearing: f64) -> Result<Self, SetBearingError> {
-        if 0f64 > bearing || bearing > 360f64 {
+        if !(0f64..=360f64).contains(&bearing) {
             return Err(SetBearingError::OutOfRange);
         }
 
@@ -19,7 +22,7 @@ impl Bearing {
     }
 
     pub fn update(&mut self, bearing: f64) -> Result<(), SetBearingError> {
-        if 0f64 > bearing || bearing > 360f64 {
+        if !(0f64..=360f64).contains(&bearing) {
             return Err(SetBearingError::OutOfRange);
         }
         self.bearing = bearing;
@@ -32,6 +35,13 @@ impl Bearing {
 
     pub fn radians(&self) -> f64 {
         (self.bearing / 180f64) * core::f64::consts::PI
+    }
+}
+
+impl From<Bearing> for AngleF32 {
+
+    fn from(value: Bearing) -> Self {
+        Self::new::<degree>(value.bearing as f32)
     }
 }
 
@@ -50,6 +60,7 @@ pub trait GeodeticCoordinate2DTrait {
 
 /// Coordinate in a Geodetic coordinate system only representing a position with no specific
 /// altitude
+#[derive(Copy, Clone)]
 pub struct GeodeticCoordinate2D {
     latitude: AngleF32,
     longitude: AngleF32,
@@ -99,6 +110,28 @@ impl GeodeticCoordinate2D {
             ellipsoidal_height,
         }
     }
+
+    pub fn new_from(self, angle: AngleF32, distance: Length<uom::si::SI<f32>, f32>) -> Self {
+        let n1: NVector = self.into();
+        let angular_distance = distance.get::<uom::si::length::kilometer>() / EARTH_RADIUS;
+
+        let n = NVector::new([0f32, 0f32, 1f32]);
+        
+        let de = MathVec::new(n.cross_product(n1).unit_vector());
+        let dn = n1.cross_product(de);
+
+        let de_sin = de * f32::from(angle.sin());
+        let dn_cos = dn * f32::from(angle.sin());
+
+        let d = dn_cos + de_sin;
+
+        let x = n1 * angular_distance.cos();
+        let y = d * angular_distance.sin();
+
+        let n2: NVector = x + y;
+ 
+        n2.into()
+    }
 }
 
 impl GeodeticCoordinate2DTrait for GeodeticCoordinate2D {
@@ -122,6 +155,20 @@ pub(crate) type NVector = crate::generals::tensor::MathVec<f32, 3>;
 impl<GeodeticCoordinate: GeodeticCoordinate2DTrait> From<GeodeticCoordinate> for NVector {
     fn from(value: GeodeticCoordinate) -> Self {
         Self::new([(value.latitude().cos() * value.longitude().cos()).into(), (value.latitude().cos() * value.longitude().sin()).into(), value.latitude().sin().into()])
+    }
+}
+
+impl From<NVector> for GeodeticCoordinate2D {
+    fn from(value: NVector) -> Self {
+        let value = value.data();
+        
+        let a: f32 = value[0].pow(2) + value[1].pow(2);
+        let b: f32 = a.pow(0.5);
+
+        GeodeticCoordinate2D {
+            latitude: AngleF32::new::<radian>((value[2] / b).atan()),
+            longitude: AngleF32::new::<radian>((value[1] / value[0]).atan())
+        }
     }
 }
 

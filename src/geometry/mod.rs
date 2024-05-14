@@ -5,5 +5,5 @@ pub use coordinates::*;
 
 
 pub trait Intersect<Coordinate> {
-    fn intersects(&self, line: line::Line<Coordinate>) -> Vec<Coordinate>;
+    fn intersects(self, line: line::Line<Coordinate>) -> Vec<Coordinate>;
 }

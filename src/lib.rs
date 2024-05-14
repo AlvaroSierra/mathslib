@@ -1,5 +1,5 @@
-#![feature(generic_const_exprs)]
-// See #76560
+#![allow(incomplete_features)]
+#![feature(generic_const_exprs)] // See #76560
 
 pub mod generals;
 

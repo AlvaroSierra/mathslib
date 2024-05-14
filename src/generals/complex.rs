@@ -14,7 +14,7 @@ mod test {}
 type ComplexNumber<T> = MathVec<T, 2>;
 impl<T: Display> Display for ComplexNumber<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&*format!(
+        f.write_str(&format!(
             "{} + {}{}",
             self.data()[0],
             self.data()[1],

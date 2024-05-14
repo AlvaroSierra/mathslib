@@ -56,7 +56,7 @@ fn orientation(
     q: CartesianCoordinates2D<f64>,
     r: CartesianCoordinates2D<f64>,
 ) -> Orientation {
-    let pq = (q.clone() - p).add_dim(0f64);
+    let pq = (q - p).add_dim(0f64);
     let qr = (r - q).add_dim(0f64);
     let n = pq.cross_product(qr);
     let p = n.data().get(2).unwrap();
@@ -69,7 +69,7 @@ fn orientation(
         return Orientation::Clockwise;
     }
 
-    return Orientation::Counterclockwise;
+    Orientation::Counterclockwise
 }
 
 fn on_segment(
