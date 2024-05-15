@@ -10,19 +10,21 @@ pub struct MathVec<T, const DIMS: usize> {
     data: [T; DIMS],
 }
 
-impl<T: Copy, const DIMS: usize> MathVec<T, DIMS> {
-    pub fn cross_product<P: Copy>(mut self, rhs: MathVec<P, DIMS>) -> Self
-    where
-        T: Mul<P, Output = T>,
-    {
-        // TODO: Fix this, this is not the cross product XD
-        // TODO: Move this function to a Trait, the cross product also applies for matrices (although signature might not be the same therefore kept here for )
-        for m in 0..DIMS {
-            self.data[m] = self.data[m] * rhs.data[m]
-        }
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-        self
+    #[test]
+    fn cross_product() {
+        let a = MathVec::new([1, 2, 3]);
+        let b = MathVec::new([4, 5, 6]);
+
+        assert_eq!(a.cross_product(b), MathVec::new([-3, 6, -3]));
     }
+}
+
+
+impl<T: Copy, const DIMS: usize> MathVec<T, DIMS> {
 
     pub fn add_dim(self, new_val: T) -> MathVec<T, { DIMS + 1 }> {
         let mut data = [new_val; DIMS + 1];
@@ -32,6 +34,16 @@ impl<T: Copy, const DIMS: usize> MathVec<T, DIMS> {
         }
 
         MathVec::new(data)
+    }
+}
+
+impl<T: Copy> MathVec<T, 3> {
+    pub fn cross_product<P: Copy>(&self, rhs: MathVec<P, 3>) -> Self where T: Mul<P, Output = T> + Sub<T, Output = T> {
+        MathVec::new([
+            self.data[1] * rhs.data[2] - self.data[2] * rhs.data[1],
+            self.data[2] * rhs.data[0] - self.data[0] * rhs.data[2],
+            self.data[0] * rhs.data[1] - self.data[1] * rhs.data[0]
+        ])  
     }
 }
 
