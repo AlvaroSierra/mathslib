@@ -3,9 +3,9 @@ use crate::generals::traits::Pow;
 
 #[cfg(test)]
 mod test {
-    use std::f32;
-    use approx::relative_eq;
     use crate::generals::tensor::MathVec;
+    use approx::relative_eq;
+    use std::f32;
 
     use crate::geometry::polar::PolarCoordinates;
 
@@ -18,8 +18,16 @@ mod test {
         let transposed: MathVec<f32, 2> = test_case.into();
         let correct = MathVec::new([0f32, 1.5]);
 
-        relative_eq!(transposed.data()[0], correct.data()[0], epsilon = f32::EPSILON);
-        relative_eq!(transposed.data()[1], correct.data()[1], epsilon = f32::EPSILON);
+        relative_eq!(
+            transposed.data()[0],
+            correct.data()[0],
+            epsilon = f32::EPSILON
+        );
+        relative_eq!(
+            transposed.data()[1],
+            correct.data()[1],
+            epsilon = f32::EPSILON
+        );
     }
 }
 
@@ -52,4 +60,3 @@ impl From<PolarCoordinates<f32>> for MathVec<f32, 2> {
         ])
     }
 }
-

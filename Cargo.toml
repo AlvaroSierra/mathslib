@@ -15,10 +15,12 @@ solve = []
 optimize = []
 stats = []
 geometry = []
+serde = ["dep:serde"]
 
 [dependencies]
 thiserror = "1.0"
 uom = "0.36"
+serde = { version = "1.0", features = ["derive"], optional = true}
 
 [dev-dependencies]
 approx = "0.5"

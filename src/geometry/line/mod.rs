@@ -1,7 +1,7 @@
 use crate::{generals::tensor::MathVecTrait, geometry::Intersect};
 use uom::si::length::{kilometer, Length as LengthDim};
 
-use super::geodetic::{EARTH_RADIUS, Bearing, GeodeticCoordinate2D, NVector};
+use super::geodetic::{Bearing, GeodeticCoordinate2D, NVector, EARTH_RADIUS};
 
 // TODO: Rename to segment or alike
 /// Line made from the shortest path between two points
@@ -13,16 +13,12 @@ pub struct Line<Coordinate> {
 
 impl<Coordinate> Line<Coordinate> {
     pub fn new(x0: Coordinate, x1: Coordinate) -> Self {
-        Self {
-            x0,
-            x1
-        }
+        Self { x0, x1 }
     }
 }
 
 impl Line<GeodeticCoordinate2D> {
     pub fn bearing(self) -> Bearing {
-
         let north_vector: NVector = NVector::new([0f32, 0f32, 1f32]);
         let c2 = Line::<NVector>::new(self.x0.into(), north_vector).great_circle();
         let c1 = self.great_circle();
@@ -32,17 +28,21 @@ impl Line<GeodeticCoordinate2D> {
 
         let sign = match cross_product.clone().dot_product(a) >= 0f32 {
             true => 1f32,
-            false => -1f32
+            false => -1f32,
         };
-        
+
         let sin = sign * cross_product.magnitude();
         let cos = c1.dot_product(c2);
 
-        Bearing::new((sin / cos).atan().into()).expect("This function should never fail but raise issue if it does")
+        Bearing::new((sin / cos).atan().into())
+            .expect("This function should never fail but raise issue if it does")
     }
 
     pub fn bisect(self) -> GeodeticCoordinate2D {
-        self.x0.new_from(self.bearing().into(), LengthDim::<uom::si::SI<f32>, f32>::new::<kilometer>(self.length() / 2f32))
+        self.x0.new_from(
+            self.bearing().into(),
+            LengthDim::<uom::si::SI<f32>, f32>::new::<kilometer>(self.length() / 2f32),
+        )
     }
 }
 
@@ -55,7 +55,6 @@ impl<Coordinate: From<NVector> + Into<NVector> + Clone> Intersect<Coordinate> fo
 
         let _n1: Coordinate = self_nvec.cross_product(line_nvec).into();
         let _n2: Coordinate = line_nvec.cross_product(self_nvec).into();
-
 
         todo!()
     }
@@ -82,7 +81,7 @@ pub(crate) trait GreatCircle {
 }
 
 impl<Coordinate: Into<NVector> + Clone> GreatCircle for Line<Coordinate> {
-    fn great_circle(self) -> NVector{
+    fn great_circle(self) -> NVector {
         let x0: NVector = self.x0.into();
         let x1: NVector = self.x1.into();
 
@@ -95,7 +94,5 @@ mod tests {
     use super::*;
 
     #[test]
-    fn intersect_geodetic() {
-        
-    }
+    fn intersect_geodetic() {}
 }

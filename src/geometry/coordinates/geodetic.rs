@@ -39,7 +39,6 @@ impl Bearing {
 }
 
 impl From<Bearing> for AngleF32 {
-
     fn from(value: Bearing) -> Self {
         Self::new::<degree>(value.bearing as f32)
     }
@@ -116,7 +115,7 @@ impl GeodeticCoordinate2D {
         let angular_distance = distance.get::<uom::si::length::kilometer>() / EARTH_RADIUS;
 
         let n = NVector::new([0f32, 0f32, 1f32]);
-        
+
         let de = MathVec::new(n.cross_product(n1).unit_vector());
         let dn = n1.cross_product(de);
 
@@ -129,7 +128,7 @@ impl GeodeticCoordinate2D {
         let y = d * angular_distance.sin();
 
         let n2: NVector = x + y;
- 
+
         n2.into()
     }
 }
@@ -147,27 +146,31 @@ impl GeodeticCoordinate2DTrait for GeodeticCoordinate2D {
 }
 
 /// This struct is a representation of geodetic coordinates which represent the outward-pointing unit vector which is normal to that position to the ellipsoid. This crate relies in this type for much of the geometry computation
-/// 
-/// 
+///
+///
 /// See https://en.wikipedia.org/wiki/N-vector
 pub(crate) type NVector = crate::generals::tensor::MathVec<f32, 3>;
 
 impl<GeodeticCoordinate: GeodeticCoordinate2DTrait> From<GeodeticCoordinate> for NVector {
     fn from(value: GeodeticCoordinate) -> Self {
-        Self::new([(value.latitude().cos() * value.longitude().cos()).into(), (value.latitude().cos() * value.longitude().sin()).into(), value.latitude().sin().into()])
+        Self::new([
+            (value.latitude().cos() * value.longitude().cos()).into(),
+            (value.latitude().cos() * value.longitude().sin()).into(),
+            value.latitude().sin().into(),
+        ])
     }
 }
 
 impl From<NVector> for GeodeticCoordinate2D {
     fn from(value: NVector) -> Self {
         let value = value.data();
-        
+
         let a: f32 = value[0].pow(2) + value[1].pow(2);
         let b: f32 = a.pow(0.5);
 
         GeodeticCoordinate2D {
             latitude: AngleF32::new::<radian>((value[2] / b).atan()),
-            longitude: AngleF32::new::<radian>((value[1] / value[0]).atan())
+            longitude: AngleF32::new::<radian>((value[1] / value[0]).atan()),
         }
     }
 }

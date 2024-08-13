@@ -16,7 +16,11 @@ mod tests {
     /// These tests don't include validation for real numbers to the power of a float (int^float) due to the possibility of resulting in a complex number not yet implemented
     use std::fmt::Debug;
 
-    fn test_relative_eq<T: Pow<P, Q> + Copy, P: Clone, Q: PartialEq + Debug + RelativeEq>(base: T, exp: P, result: Q) {
+    fn test_relative_eq<T: Pow<P, Q> + Copy, P: Clone, Q: PartialEq + Debug + RelativeEq>(
+        base: T,
+        exp: P,
+        result: Q,
+    ) {
         relative_eq!(base.pow(exp.clone()), result);
         relative_eq!(pow(base, exp), result);
     }
