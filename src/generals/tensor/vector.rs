@@ -37,6 +37,14 @@ impl<T: Copy, const DIMS: usize> MathVec<T, DIMS> {
     }
 }
 
+impl<T: Zero + Copy, const DIMS: usize> Zero for MathVec<T, DIMS> {
+    fn zero() -> Self {
+        Self {
+            data: [T::zero(); DIMS],
+        }
+    }
+}
+
 impl<T: Copy> MathVec<T, 3> {
     pub fn cross_product<P: Copy>(&self, rhs: MathVec<P, 3>) -> Self where T: Mul<P, Output = T> + Sub<T, Output = T> {
         MathVec::new([
