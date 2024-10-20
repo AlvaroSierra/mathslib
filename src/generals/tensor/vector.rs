@@ -1,5 +1,8 @@
 use crate::generals::traits::{Pow, Zero};
-use std::ops::{Add, AddAssign, Div, Mul, Sub, SubAssign};
+use std::{
+    iter::Sum,
+    ops::{Add, AddAssign, Div, Mul, Sub, SubAssign},
+};
 
 /// A mathematical representation of a vector
 /// # TODO
@@ -67,6 +70,12 @@ impl<T: Copy + Zero + AddAssign, const DIMS: usize> MathVec<T, DIMS> {
         }
 
         total
+    }
+}
+
+impl<T: Zero + Copy + AddAssign<T>, const DIMS: usize> Sum for MathVec<T, DIMS> {
+    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.fold(MathVec::zero(), |a, b| a + b)
     }
 }
 
