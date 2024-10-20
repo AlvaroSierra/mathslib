@@ -2,6 +2,7 @@ use crate::generals::tensor::MathVec;
 
 // In this library a vector is the same as a Cartesian coordinates point
 pub type CartesianCoordinates2D<T> = MathVec<T, 2>;
+pub type CartesianVelocity2D<T> = MathVec<T, 2>;
 
 impl<T: Copy> CartesianCoordinates2D<T> {
     pub fn x(&self) -> &T {

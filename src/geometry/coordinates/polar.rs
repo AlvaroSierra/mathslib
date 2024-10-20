@@ -1,5 +1,7 @@
 use crate::generals::tensor::MathVec;
-use crate::generals::traits::Pow;
+use crate::generals::traits::{Pow, Trig};
+
+use super::cartesian::CartesianVelocity2D;
 
 #[cfg(test)]
 mod test {
@@ -57,6 +59,27 @@ impl From<PolarCoordinates<f32>> for MathVec<f32, 2> {
         MathVec::new([
             value.magnitude * value.amplitude.cos(),
             value.magnitude * value.amplitude.sin(),
+        ])
+    }
+}
+
+pub struct PolarVelocity2D<T> {
+    pub u_r: T,
+    pub u_theta: T,
+}
+
+// TODO: Is this going to become too permisive, possibly allowing values which may result in undefined behaviour?
+impl<T: Trig + std::ops::Mul<Output = T> + std::ops::Sub<Output = T> + Copy>
+    CartesianVelocity2D<T>
+{
+    pub fn from_polar(value: PolarVelocity2D<T>, point: impl Into<PolarCoordinates<T>>) -> Self {
+        let point: PolarCoordinates<T> = point.into();
+
+        let cosine = point.amplitude.cos();
+        let sine = point.amplitude.sin();
+        CartesianVelocity2D::new([
+            value.u_r * cosine - point.magnitude * value.u_theta * sine,
+            value.u_theta * cosine - point.magnitude * value.u_r * sine,
         ])
     }
 }
