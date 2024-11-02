@@ -45,6 +45,17 @@ pub struct PolarCoordinates<T> {
 
 impl From<MathVec<f32, 2>> for PolarCoordinates<f32> {
     fn from(value: MathVec<f32, 2>) -> Self {
+
+        if value.data()[0] == 0f32 {
+
+            let magnitude = value.data()[1];
+            return match magnitude.total_cmp(&0f32) {
+                Ordering::Less => Self { magnitude, amplitude: std::f32::consts::PI * -0.5f32 },
+                Ordering::Equal => Self { magnitude: 0f32, amplitude: 0f32},
+                Ordering::Greater => Self { magnitude, amplitude: std::f32::consts::PI * 0.5f32}
+            }
+        }
+
         Self {
             // FIXME: Extraction of data needs to be directly indexed and comiled time check
             // for correct index
