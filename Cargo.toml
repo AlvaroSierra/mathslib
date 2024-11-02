@@ -16,11 +16,13 @@ optimize = []
 stats = []
 geometry = []
 serde = ["dep:serde"]
+approx = ["dep:approx"]
 
 [dependencies]
 thiserror = "1.0"
 uom = "0.36"
 serde = { version = "1.0", features = ["derive"], optional = true}
+approx = { version = "0.5", optional = true }
 
 [dev-dependencies]
 approx = "0.5"

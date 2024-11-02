@@ -196,3 +196,40 @@ impl<T> From<MathVec<T, 3>> for (T, T, T) {
         return value.data.into();
     }
 }
+
+#[cfg(feature="approx")]
+use approx::{AbsDiffEq, RelativeEq};
+
+#[cfg(feature="approx")]
+impl<T: AbsDiffEq, const DIMS: usize> AbsDiffEq for MathVec<T, DIMS> where <T as AbsDiffEq>::Epsilon: std::marker::Copy {
+    type Epsilon = MathVec<<T as AbsDiffEq>::Epsilon, DIMS>;
+
+    fn default_epsilon() -> MathVec<<T as AbsDiffEq>::Epsilon, DIMS> {
+        MathVec::new([T::default_epsilon(); DIMS])
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
+        self.data
+            .iter()
+            .enumerate()
+            .map(|(inx, val)| val.abs_diff_eq(&other.data()[inx], epsilon.data()[inx]))
+            .fold(true, |acc, mk| acc && mk)
+    }
+}
+
+
+#[cfg(feature="approx")]
+impl<T: RelativeEq, const DIMS: usize> RelativeEq for MathVec<T, DIMS> where <T as AbsDiffEq>::Epsilon: std::marker::Copy {
+
+    fn default_max_relative() -> MathVec<<T as AbsDiffEq>::Epsilon, DIMS> {
+        MathVec::new([T::default_max_relative(); DIMS])
+    }
+
+    fn relative_eq(&self, other: &Self, epsilon: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.data
+            .iter()
+            .enumerate()
+            .map(|(inx, val)| val.relative_eq(&other.data()[inx], epsilon.data()[inx], max_relative.data()[inx]))
+            .fold(true, |acc, mk| acc && mk)
+    }
+}
