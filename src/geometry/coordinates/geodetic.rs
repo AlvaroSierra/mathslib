@@ -116,7 +116,7 @@ impl GeodeticCoordinate2D {
 
         let n = NVector::new([0f32, 0f32, 1f32]);
 
-        let de = MathVec::new(n.cross_product(n1).unit_vector());
+        let de = n.cross_product(n1).unit_vector();
         let dn = n1.cross_product(de);
 
         let de_sin = de * f32::from(angle.sin());

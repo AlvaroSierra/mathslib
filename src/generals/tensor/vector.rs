@@ -144,9 +144,9 @@ impl<
         const DIMS: usize,
     > MathVecTrait<T, DIMS> for MathVec<T, DIMS>
 {
-    fn unit_vector(&self) -> [T; DIMS] {
+    fn unit_vector(&self) -> MathVec<T, DIMS> {
         let mag = self.magnitude();
-        self.data.map(|x| x / mag)
+        MathVec::new(self.data.map(|x| x / mag))
     }
 
     /// Magnitude will always be higher that the elements
@@ -173,7 +173,7 @@ impl<T, const DIMS: usize> From<MathVec<T, DIMS>> for [T; DIMS] {
 }
 
 pub trait MathVecTrait<T, const DIMS: usize> {
-    fn unit_vector(&self) -> [T; DIMS];
+    fn unit_vector(&self) -> Self;
 
     #[doc(alias = "abs")]
     fn magnitude(&self) -> T;
