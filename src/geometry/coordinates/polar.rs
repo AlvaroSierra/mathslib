@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use crate::generals::tensor::MathVec;
 use crate::generals::traits::{Pow, Trig};
 
@@ -38,6 +39,7 @@ mod test {
 /// two polar coordinates.
 ///
 /// Note: Amplitude assumed to always be in radians.
+#[derive(Debug)]
 pub struct PolarCoordinates<T> {
     pub magnitude: T,
     pub amplitude: T,
@@ -74,6 +76,7 @@ impl From<PolarCoordinates<f32>> for MathVec<f32, 2> {
     }
 }
 
+#[derive(Debug)]
 pub struct PolarVelocity2D<T> {
     pub u_r: T,
     pub u_theta: T,
