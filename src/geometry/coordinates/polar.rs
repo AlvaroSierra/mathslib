@@ -7,10 +7,13 @@ use super::cartesian::CartesianVelocity2D;
 #[cfg(test)]
 mod test {
     use crate::generals::tensor::MathVec;
-    use approx::relative_eq;
+    use approx::{assert_relative_eq, assert_abs_diff_eq};
     use std::f32;
+    use crate::geometry::cartesian::CartesianCoordinates2D;
 
-    use crate::geometry::polar::PolarCoordinates;
+
+    use super::PolarCoordinates;
+
 
     #[test]
     fn test_coodinate_conversion() {
@@ -21,17 +24,36 @@ mod test {
         let transposed: MathVec<f32, 2> = test_case.into();
         let correct = MathVec::new([0f32, 1.5]);
 
-        relative_eq!(
+        assert_relative_eq!(
             transposed.data()[0],
             correct.data()[0],
             epsilon = f32::EPSILON
         );
-        relative_eq!(
+        assert_relative_eq!(
             transposed.data()[1],
             correct.data()[1],
             epsilon = f32::EPSILON
         );
     }
+
+    #[test]
+    fn test_coordinate_conversion_2() {
+        let angle = std::f32::consts::PI * 0.25;
+        let test_case = PolarCoordinates {
+            magnitude: 1.5,
+            amplitude: angle,            
+        };
+
+        let transposed: CartesianCoordinates2D<f32> = test_case.clone().into();
+        let back_polar: PolarCoordinates<f32> = transposed.into();
+
+        assert_abs_diff_eq!(transposed.data()[0], 1.060660172f32);
+        assert_abs_diff_eq!(transposed.data()[1], 1.060660172f32);
+
+        assert_relative_eq!(&test_case.magnitude, &back_polar.magnitude);
+        assert_relative_eq!(&test_case.amplitude, &back_polar.amplitude);
+    }
+
 }
 
 /// Although polar coordinates could be represented as a vector, doing so would mean we inherit
@@ -39,7 +61,7 @@ mod test {
 /// two polar coordinates.
 ///
 /// Note: Amplitude assumed to always be in radians.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PolarCoordinates<T> {
     pub magnitude: T,
     pub amplitude: T,
@@ -62,7 +84,7 @@ impl From<MathVec<f32, 2>> for PolarCoordinates<f32> {
             // FIXME: Extraction of data needs to be directly indexed and comiled time check
             // for correct index
             magnitude: f32::powf(value.data()[0].pow(2) + value.data()[1].pow(2), 0.5),
-            amplitude: f32::tan(value.data()[1] / value.data()[0]),
+            amplitude: f32::atan(value.data()[1] / value.data()[0]),
         }
     }
 }
@@ -93,7 +115,7 @@ impl<T: Trig + std::ops::Mul<Output = T> + std::ops::Sub<Output = T> + Copy>
         let sine = point.amplitude.sin();
         CartesianVelocity2D::new([
             value.u_r * cosine - point.magnitude * value.u_theta * sine,
-            value.u_theta * cosine - point.magnitude * value.u_r * sine,
+            value.u_theta * cosine * point.magnitude + value.u_r * sine,
         ])
     }
 }
