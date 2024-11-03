@@ -1,19 +1,17 @@
-use std::cmp::Ordering;
 use crate::generals::tensor::MathVec;
 use crate::generals::traits::{Pow, Trig};
+use std::cmp::Ordering;
 
 use super::cartesian::CartesianVelocity2D;
 
 #[cfg(test)]
 mod test {
     use crate::generals::tensor::MathVec;
-    use approx::{assert_relative_eq, assert_abs_diff_eq};
-    use std::f32;
     use crate::geometry::cartesian::CartesianCoordinates2D;
-
+    use approx::{assert_abs_diff_eq, assert_relative_eq};
+    use std::f32;
 
     use super::PolarCoordinates;
-
 
     #[test]
     fn test_coodinate_conversion() {
@@ -41,7 +39,7 @@ mod test {
         let angle = std::f32::consts::PI * 0.25;
         let test_case = PolarCoordinates {
             magnitude: 1.5,
-            amplitude: angle,            
+            amplitude: angle,
         };
 
         let transposed: CartesianCoordinates2D<f32> = test_case.clone().into();
@@ -53,7 +51,6 @@ mod test {
         assert_relative_eq!(&test_case.magnitude, &back_polar.magnitude);
         assert_relative_eq!(&test_case.amplitude, &back_polar.amplitude);
     }
-
 }
 
 /// Although polar coordinates could be represented as a vector, doing so would mean we inherit
@@ -69,15 +66,22 @@ pub struct PolarCoordinates<T> {
 
 impl From<MathVec<f32, 2>> for PolarCoordinates<f32> {
     fn from(value: MathVec<f32, 2>) -> Self {
-
         if value.data()[0] == 0f32 {
-
             let magnitude = value.data()[1];
             return match magnitude.total_cmp(&0f32) {
-                Ordering::Less => Self { magnitude, amplitude: std::f32::consts::PI * -0.5f32 },
-                Ordering::Equal => Self { magnitude: 0f32, amplitude: 0f32},
-                Ordering::Greater => Self { magnitude, amplitude: std::f32::consts::PI * 0.5f32}
-            }
+                Ordering::Less => Self {
+                    magnitude,
+                    amplitude: std::f32::consts::PI * -0.5f32,
+                },
+                Ordering::Equal => Self {
+                    magnitude: 0f32,
+                    amplitude: 0f32,
+                },
+                Ordering::Greater => Self {
+                    magnitude,
+                    amplitude: std::f32::consts::PI * 0.5f32,
+                },
+            };
         }
 
         Self {
@@ -105,8 +109,13 @@ pub struct PolarVelocity2D<T> {
 }
 
 // TODO: Is this going to become too permisive, possibly allowing values which may result in undefined behaviour?
-impl<T: Trig + std::ops::Mul<Output = T> + std::ops::Sub<Output = T> + Copy>
-    CartesianVelocity2D<T>
+impl<
+        T: Trig
+            + std::ops::Mul<Output = T>
+            + std::ops::Sub<Output = T>
+            + Copy
+            + std::ops::Add<Output = T>,
+    > CartesianVelocity2D<T>
 {
     pub fn from_polar(value: PolarVelocity2D<T>, point: impl Into<PolarCoordinates<T>>) -> Self {
         let point: PolarCoordinates<T> = point.into();

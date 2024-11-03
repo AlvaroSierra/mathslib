@@ -139,6 +139,14 @@ impl<T: SubAssign + Copy, const DIMS: usize> Sub for MathVec<T, DIMS> {
     }
 }
 
+impl<T: From<f32> + std::ops::Mul<Output = T>> MathVec<T, 2> {
+    pub fn perpendicular_clockwise(self) -> Self {
+        let [x, y] = self.data;
+
+        MathVec::new([y, T::from(-1f32) * x])
+    }
+}
+
 impl<
         T: Div<Output = T> + Copy + Zero + Pow<i8, T> + AddAssign + Into<f32> + From<f32>,
         const DIMS: usize,
@@ -197,11 +205,14 @@ impl<T> From<MathVec<T, 3>> for (T, T, T) {
     }
 }
 
-#[cfg(feature="approx")]
+#[cfg(feature = "approx")]
 use approx::{AbsDiffEq, RelativeEq};
 
-#[cfg(feature="approx")]
-impl<T: AbsDiffEq, const DIMS: usize> AbsDiffEq for MathVec<T, DIMS> where <T as AbsDiffEq>::Epsilon: std::marker::Copy {
+#[cfg(feature = "approx")]
+impl<T: AbsDiffEq, const DIMS: usize> AbsDiffEq for MathVec<T, DIMS>
+where
+    <T as AbsDiffEq>::Epsilon: std::marker::Copy,
+{
     type Epsilon = MathVec<<T as AbsDiffEq>::Epsilon, DIMS>;
 
     fn default_epsilon() -> MathVec<<T as AbsDiffEq>::Epsilon, DIMS> {
@@ -217,19 +228,31 @@ impl<T: AbsDiffEq, const DIMS: usize> AbsDiffEq for MathVec<T, DIMS> where <T as
     }
 }
 
-
-#[cfg(feature="approx")]
-impl<T: RelativeEq, const DIMS: usize> RelativeEq for MathVec<T, DIMS> where <T as AbsDiffEq>::Epsilon: std::marker::Copy {
-
+#[cfg(feature = "approx")]
+impl<T: RelativeEq, const DIMS: usize> RelativeEq for MathVec<T, DIMS>
+where
+    <T as AbsDiffEq>::Epsilon: std::marker::Copy,
+{
     fn default_max_relative() -> MathVec<<T as AbsDiffEq>::Epsilon, DIMS> {
         MathVec::new([T::default_max_relative(); DIMS])
     }
 
-    fn relative_eq(&self, other: &Self, epsilon: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+    fn relative_eq(
+        &self,
+        other: &Self,
+        epsilon: Self::Epsilon,
+        max_relative: Self::Epsilon,
+    ) -> bool {
         self.data
             .iter()
             .enumerate()
-            .map(|(inx, val)| val.relative_eq(&other.data()[inx], epsilon.data()[inx], max_relative.data()[inx]))
+            .map(|(inx, val)| {
+                val.relative_eq(
+                    &other.data()[inx],
+                    epsilon.data()[inx],
+                    max_relative.data()[inx],
+                )
+            })
             .fold(true, |acc, mk| acc && mk)
     }
 }
