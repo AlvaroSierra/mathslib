@@ -2,7 +2,7 @@ use thiserror::Error;
 use uom::si::angle::{degree, radian, Angle};
 use uom::si::length::Length;
 
-use crate::generals::tensor::{MathVec, MathVecTrait};
+use crate::generals::tensor::MathVecTrait;
 use crate::generals::traits::Pow;
 
 pub const EARTH_RADIUS: f32 = 6371f32;

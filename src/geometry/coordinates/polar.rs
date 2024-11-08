@@ -53,6 +53,8 @@ mod test {
     }
 }
 
+/// A polar coordinate representation of a point on a 2D plane.
+///
 /// Although polar coordinates could be represented as a vector, doing so would mean we inherit
 /// all the methods from it which would not work eg. adding a MathVec is not the same as adding
 /// two polar coordinates.

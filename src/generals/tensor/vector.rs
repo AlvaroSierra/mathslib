@@ -189,19 +189,19 @@ pub trait MathVecTrait<T, const DIMS: usize> {
 
 impl<T> From<MathVec<T, 1>> for (T,) {
     fn from(value: MathVec<T, 1>) -> Self {
-        return value.data.into();
+        value.data.into()
     }
 }
 
 impl<T> From<MathVec<T, 2>> for (T, T) {
     fn from(value: MathVec<T, 2>) -> Self {
-        return value.data.into();
+        value.data.into()
     }
 }
 
 impl<T> From<MathVec<T, 3>> for (T, T, T) {
     fn from(value: MathVec<T, 3>) -> Self {
-        return value.data.into();
+        value.data.into()
     }
 }
 

@@ -15,7 +15,7 @@ impl<T: Copy> CartesianCoordinates2D<T> {
     }
 }
 
-pub struct Segment<T>(CartesianCoordinates2D<T>, CartesianCoordinates2D<T>);
+pub struct Segment<T>(pub CartesianCoordinates2D<T>, pub CartesianCoordinates2D<T>);
 
 pub fn do_intersect<
     T: std::cmp::Ord
